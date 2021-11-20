@@ -1,13 +1,30 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
 import contacts from '../../assets/data/contacts.json';
 
 const ContactScreen = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredContacts, setFilteredContacts] = useState(contacts);
+
+  useEffect(() => {
+    const newContacts = contacts.filter(contact =>
+      contact.user_display_name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
+    );
+    setFilteredContacts(newContacts);
+  }, [searchTerm]);
+
   return (
     <View style={styles.page}>
-      <TextInput style={styles.searchInput} placeholder="Search..." />
+      <TextInput
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+        style={styles.searchInput}
+        placeholder="Search..."
+      />
       <FlatList
-        data={contacts}
+        data={filteredContacts}
         renderItem={({item}) => (
           <Text style={styles.contactName}>{item.user_display_name}</Text>
         )}
